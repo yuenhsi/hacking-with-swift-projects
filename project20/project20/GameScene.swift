@@ -6,84 +6,178 @@
 //  Copyright © 2016 Yuen Hsi Chang. All rights reserved.
 //
 
-import SpriteKit
 import GameplayKit
+import SpriteKit
 
 class GameScene: SKScene {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var gameTimer: Timer!
+    var fireworks = [SKNode]()
+    
+    var leftEdge = -22
+    var bottomEdge = -22
+    var rightEdge = 1024 + 22
+    
+    var score = 0 {
+        didSet {
+            
+        }
+    }
     
     override func didMove(to view: SKView) {
+        let background = SKSpriteNode(imageNamed: "background")
+        background.position = CGPoint(x: 512, y: 384)
+        background.zPosition = -1
+        background.blendMode = .replace
+        addChild(background)
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(M_PI), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+        gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
+    }
+    
+    func launchFireworks() {
+        let movementAmount: CGFloat = 1800
+        switch GKRandomSource.sharedRandom().nextInt(upperBound: 4) {
+        case 0:
+            createFirework(xMovement: 0, x: 512 - 200, y: bottomEdge)
+            createFirework(xMovement: 0, x: 512 - 100, y: bottomEdge)
+            createFirework(xMovement: 0, x: 512, y: bottomEdge)
+            createFirework(xMovement: 0, x: 512 + 100, y: bottomEdge)
+            createFirework(xMovement: 0, x: 512 + 200, y: bottomEdge)
+        case 1:
+            createFirework(xMovement: -200, x: 512 - 200, y: bottomEdge)
+            createFirework(xMovement: -100, x: 512 - 100, y: bottomEdge)
+            createFirework(xMovement: 0, x: 512, y: bottomEdge)
+            createFirework(xMovement: 100, x: 512 + 100, y: bottomEdge)
+            createFirework(xMovement: 200, x: 512 + 200, y: bottomEdge)
+        case 2:
+            createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 400)
+            createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 300)
+            createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 200)
+            createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 100)
+            createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge)
+        case 3:
+            createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 400)
+            createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 300)
+            createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 200)
+            createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 100)
+            createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge)
+        default:
+            break
         }
     }
     
+    func createFirework(xMovement: CGFloat, x: Int, y: Int) {
+        let node = SKNode()
+        node.position = CGPoint(x: x, y: y)
+        let firework = SKSpriteNode(imageNamed: "rocket")
+        firework.name = "firework"
+        switch GKRandomSource.sharedRandom().nextInt(upperBound: 3) {
+        case 0:
+            firework.color = .cyan
+            firework.colorBlendFactor = 1
+        case 1:
+            firework.color = .green
+            firework.colorBlendFactor = 1
+        case 2:
+            firework.color = .red
+            firework.colorBlendFactor = 1
+        default:
+            break
+        }
+        node.addChild(firework)
+        
+        let emitter = SKEmitterNode(fileNamed: "fuse")!
+        emitter.position = CGPoint(x: 0, y: -22)
+        node.addChild(emitter)
+        
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: xMovement, y: 1000))
+        let move = SKAction.follow(path.cgPath, asOffset: true, orientToPath: true, speed: 200)
+        node.run(move)
+        
+        fireworks.append(node)
+        addChild(node)
+    }
     
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
+    func checkTouches(_ touches: Set<UITouch>) {
+        guard let touch = touches.first else {
+            return
+        }
+        let location = touch.location(in: self)
+        let nodesAtPoint = nodes(at: location)
+        
+        for node in nodesAtPoint {
+            if node is SKSpriteNode {
+                let sprite = node as! SKSpriteNode
+                if sprite.name == "firework" {
+                    for parent in fireworks {
+                        let firework = parent.children[0] as! SKSpriteNode
+                        if firework.name == "selected" && firework.color != sprite.color {
+                            firework.name = "firework"
+                            firework.colorBlendFactor = 1
+                        }
+                        sprite.name = "selected"
+                        sprite.colorBlendFactor = 0
+                    }
+                }
+            }
         }
     }
     
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
+    func explode(firework: SKNode) {
+        let emitter = SKEmitterNode(fileNamed: "explode")!
+        emitter.position = firework.position
+        addChild(emitter)
+        
+        firework.removeFromParent()
     }
     
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
+    func explodeFireworks() {
+        var numExploed = 0
+        for (index, fireworkContainer) in fireworks.enumerated().reversed() {
+            let firework = fireworkContainer.children[0] as! SKSpriteNode
+            if firework.name == "selected" {
+                explode(firework: fireworkContainer)
+                fireworks.remove(at: index)
+                numExploed += 1
+            }
+        }
+        
+        switch numExploed {
+        case 0:
+            break
+        case 1:
+            score += 200
+        case 2:
+            score += 500
+        case 3:
+            score += 1500
+        case 4:
+            score += 2500
+        case 5:
+            score += 5000
+        default:
+            return
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        super.touchesBegan(touches, with: event)
+        checkTouches(touches)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+        super.touchesBegan(touches, with: event)
+        checkTouches(touches)
     }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        for (index, firework) in fireworks.enumerated().reversed() {
+            if firework.position.y > 900 {
+                fireworks.remove(at: index)
+                firework.removeFromParent()
+            }
+        }
     }
 }
