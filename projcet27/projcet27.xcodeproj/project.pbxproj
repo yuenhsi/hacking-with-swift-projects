@@ -14,6 +14,8 @@
 		5ACE4B651E17377400E5DE79 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5ACE4B631E17377400E5DE79 /* LaunchScreen.storyboard */; };
 		5ACE4B701E17377400E5DE79 /* projcet27Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACE4B6F1E17377400E5DE79 /* projcet27Tests.swift */; };
 		5ACE4B7B1E17377400E5DE79 /* projcet27UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACE4B7A1E17377400E5DE79 /* projcet27UITests.swift */; };
+		5ACE4B8A1E1738F900E5DE79 /* mouse.png in Resources */ = {isa = PBXBuildFile; fileRef = 5ACE4B881E1738F900E5DE79 /* mouse.png */; };
+		5ACE4B8B1E1738F900E5DE79 /* mouse@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5ACE4B891E1738F900E5DE79 /* mouse@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		5ACE4B761E17377400E5DE79 /* projcet27UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = projcet27UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ACE4B7A1E17377400E5DE79 /* projcet27UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = projcet27UITests.swift; sourceTree = "<group>"; };
 		5ACE4B7C1E17377400E5DE79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5ACE4B881E1738F900E5DE79 /* mouse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mouse.png; sourceTree = "<group>"; };
+		5ACE4B891E1738F900E5DE79 /* mouse@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mouse@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +103,8 @@
 			children = (
 				5ACE4B5A1E17377400E5DE79 /* AppDelegate.swift */,
 				5ACE4B5C1E17377400E5DE79 /* ViewController.swift */,
+				5ACE4B881E1738F900E5DE79 /* mouse.png */,
+				5ACE4B891E1738F900E5DE79 /* mouse@2x.png */,
 				5ACE4B5E1E17377400E5DE79 /* Main.storyboard */,
 				5ACE4B611E17377400E5DE79 /* Assets.xcassets */,
 				5ACE4B631E17377400E5DE79 /* LaunchScreen.storyboard */,
@@ -232,7 +238,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5ACE4B8B1E1738F900E5DE79 /* mouse@2x.png in Resources */,
 				5ACE4B651E17377400E5DE79 /* LaunchScreen.storyboard in Resources */,
+				5ACE4B8A1E1738F900E5DE79 /* mouse.png in Resources */,
 				5ACE4B621E17377400E5DE79 /* Assets.xcassets in Resources */,
 				5ACE4B601E17377400E5DE79 /* Main.storyboard in Resources */,
 			);
@@ -417,6 +425,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ftl.projcet27;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -429,6 +438,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ftl.projcet27;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
